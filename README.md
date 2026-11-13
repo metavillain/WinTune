@@ -80,3 +80,6 @@ The **Notifications** category is a set of toggles (not part of any template) fo
 - `HKCU` tweaks apply to the account that runs WinTune. Run it while signed in as the user you want to clean up.
 - **Protected settings.** Recent Windows builds guard some keys (via the UCPD kernel driver, Tamper Protection, or managed-component policies) so that even an administrator can't change them by script. When WinTune hits one, it logs a clear "protected on this build, not changed" warning and moves on. Where a reliable alternative exists it uses that instead — for example Widgets is hidden through the per-user taskbar setting rather than the machine policy, which newer builds ignore.
 - **Widgets:** "Hide Widgets button" removes it from the taskbar (reliable). "Remove Widgets app" uninstalls the underlying Web Experience engine for a full removal.
+
+## License
+Released under the [MIT License](LICENSE).
