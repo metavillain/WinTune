@@ -25,17 +25,25 @@ public class WinTuneRow : INotifyPropertyChanged {
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="WinTune - Windows 11 debloat &amp; tune" Width="1180" Height="780"
-        WindowStartupLocation="CenterScreen" FontFamily="Segoe UI" FontSize="13" Background="#F3F3F3">
+        WindowStartupLocation="CenterScreen" FontFamily="Segoe UI" FontSize="13" Background="{DynamicResource WinBg}">
   <Window.Resources>
-    <SolidColorBrush x:Key="AccentBrush" Color="#0B5CAD"/>
-    <SolidColorBrush x:Key="MutedBrush" Color="#5A5A5A"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="#2B88D8"/>
+    <!-- theme brushes (light defaults; Set-Theme swaps them for dark mode) -->
+    <SolidColorBrush x:Key="WinBg"       Color="#F3F3F3"/>
+    <SolidColorBrush x:Key="FieldBg"     Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="TabHeaderBg" Color="#E6E6E6"/>
+    <SolidColorBrush x:Key="TextMain"    Color="#1F1F1F"/>
+    <SolidColorBrush x:Key="TextMuted"   Color="#555555"/>
+    <SolidColorBrush x:Key="EdgeBrush"   Color="#CFCFCF"/>
+    <SolidColorBrush x:Key="ButtonBg"    Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="ButtonFg"    Color="#1F1F1F"/>
 
     <Style TargetType="Button" x:Key="BaseButton">
       <Setter Property="Padding" Value="12,6"/>
       <Setter Property="Margin" Value="0,0,8,0"/>
-      <Setter Property="Background" Value="White"/>
-      <Setter Property="Foreground" Value="#1F1F1F"/>
-      <Setter Property="BorderBrush" Value="#CFCFCF"/>
+      <Setter Property="Background" Value="{DynamicResource ButtonBg}"/>
+      <Setter Property="Foreground" Value="{DynamicResource ButtonFg}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}"/>
       <Setter Property="BorderThickness" Value="1"/>
       <Setter Property="Cursor" Value="Hand"/>
       <Setter Property="SnapsToDevicePixels" Value="True"/>
@@ -46,8 +54,8 @@ public class WinTuneRow : INotifyPropertyChanged {
               <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Border>
             <ControlTemplate.Triggers>
-              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource AccentBrush}"/><Setter TargetName="bd" Property="Opacity" Value="0.9"/></Trigger>
-              <Trigger Property="IsPressed" Value="True"><Setter TargetName="bd" Property="Opacity" Value="0.75"/></Trigger>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/><Setter TargetName="bd" Property="Opacity" Value="0.88"/></Trigger>
+              <Trigger Property="IsPressed" Value="True"><Setter TargetName="bd" Property="Opacity" Value="0.7"/></Trigger>
               <Trigger Property="IsEnabled" Value="False"><Setter TargetName="bd" Property="Opacity" Value="0.45"/></Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate>
@@ -60,18 +68,31 @@ public class WinTuneRow : INotifyPropertyChanged {
     <Style TargetType="TextBlock" x:Key="SectionHead">
       <Setter Property="FontWeight" Value="Bold"/>
       <Setter Property="FontSize" Value="11.5"/>
-      <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
+      <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
       <Setter Property="Margin" Value="0,12,0,6"/>
     </Style>
 
     <Style TargetType="TabItem">
-      <Setter Property="Padding" Value="16,7"/>
+      <Setter Property="Foreground" Value="{DynamicResource TextMain}"/>
       <Setter Property="FontSize" Value="14"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="TabItem">
+            <Border x:Name="tb" Background="{DynamicResource TabHeaderBg}" BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1,1,1,0" CornerRadius="5,5,0,0" Margin="0,0,3,0" Padding="18,7">
+              <ContentPresenter ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsSelected" Value="True"><Setter TargetName="tb" Property="Background" Value="{DynamicResource FieldBg}"/><Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
     </Style>
 
-    <Style TargetType="CheckBox"><Setter Property="VerticalAlignment" Value="Center"/></Style>
-    <Style TargetType="TextBox"><Setter Property="Padding" Value="3,2"/></Style>
+    <Style TargetType="TextBlock"><Setter Property="Foreground" Value="{DynamicResource TextMain}"/></Style>
+    <Style TargetType="CheckBox"><Setter Property="VerticalAlignment" Value="Center"/><Setter Property="Foreground" Value="{DynamicResource TextMain}"/></Style>
+    <Style TargetType="TextBox"><Setter Property="Padding" Value="3,2"/><Setter Property="Background" Value="{DynamicResource FieldBg}"/><Setter Property="Foreground" Value="{DynamicResource TextMain}"/></Style>
   </Window.Resources>
   <Grid Margin="12">
     <Grid.RowDefinitions>
@@ -79,7 +100,7 @@ public class WinTuneRow : INotifyPropertyChanged {
       <RowDefinition Height="150"/>
     </Grid.RowDefinitions>
 
-    <TabControl Grid.Row="0" Margin="0,0,0,8" x:Name="tabs">
+    <TabControl Grid.Row="0" Margin="0,0,0,8" x:Name="tabs" Background="{DynamicResource WinBg}" BorderBrush="{DynamicResource EdgeBrush}">
       <TabItem Header="  Tweaks  ">
         <Grid Margin="8,10,8,8">
           <Grid.RowDefinitions>
@@ -93,22 +114,24 @@ public class WinTuneRow : INotifyPropertyChanged {
       <Button x:Name="btnSaveTpl" Content="Save as template..."/>
       <Button x:Name="btnDelTpl" Content="Delete"/>
       <Button x:Name="btnExport" Content="Export for deployment..."/>
+      <Button x:Name="btnCustom" Content="Add custom tweak..."/>
       <Button x:Name="btnOpenTpl" Content="Templates folder"/>
     </StackPanel>
-    <TextBlock Grid.Row="1" x:Name="txtTplDesc" Foreground="#555" TextWrapping="Wrap" Margin="0,0,0,8"/>
+    <TextBlock Grid.Row="1" x:Name="txtTplDesc" Foreground="{DynamicResource TextMuted}" TextWrapping="Wrap" Margin="0,0,0,8"/>
 
     <DockPanel Grid.Row="2" Margin="0,0,0,6">
       <TextBlock Text="Filter:" VerticalAlignment="Center" Margin="0,0,6,0" FontWeight="SemiBold"/>
+      <CheckBox DockPanel.Dock="Right" x:Name="chkDark" Content="Dark mode" VerticalAlignment="Center" Margin="14,0,0,0"/>
       <CheckBox DockPanel.Dock="Right" x:Name="chkHideNA" Content="Hide N/A" VerticalAlignment="Center" Margin="10,0,0,0"/>
       <CheckBox DockPanel.Dock="Right" x:Name="chkRisk" Content="Low risk only" VerticalAlignment="Center" Margin="10,0,0,0"/>
       <TextBox x:Name="txtSearch" Height="24" VerticalContentAlignment="Center"/>
     </DockPanel>
 
-    <ListView Grid.Row="3" x:Name="lv" Background="White">
+    <ListView Grid.Row="3" x:Name="lv" Background="{DynamicResource FieldBg}" BorderBrush="{DynamicResource EdgeBrush}" Foreground="{DynamicResource TextMain}">
       <ListView.GroupStyle>
         <GroupStyle>
           <GroupStyle.HeaderTemplate>
-            <DataTemplate><TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="14" Foreground="#0B5CAD" Margin="2,10,0,3"/></DataTemplate>
+            <DataTemplate><TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource AccentBrush}" Margin="2,10,0,3"/></DataTemplate>
           </GroupStyle.HeaderTemplate>
         </GroupStyle>
       </ListView.GroupStyle>
@@ -135,7 +158,7 @@ public class WinTuneRow : INotifyPropertyChanged {
           </GridViewColumn>
           <GridViewColumn Header="Needs" Width="70" DisplayMemberBinding="{Binding Needs}"/>
           <GridViewColumn Header="Description" Width="450">
-            <GridViewColumn.CellTemplate><DataTemplate><TextBlock Text="{Binding Description}" TextWrapping="Wrap" Foreground="#333"/></DataTemplate></GridViewColumn.CellTemplate>
+            <GridViewColumn.CellTemplate><DataTemplate><TextBlock Text="{Binding Description}" TextWrapping="Wrap" Foreground="{DynamicResource TextMuted}"/></DataTemplate></GridViewColumn.CellTemplate>
           </GridViewColumn>
           <GridViewColumn Width="90">
             <GridViewColumn.CellTemplate><DataTemplate><Button Content="Restore" Tag="restore" Padding="8,2" Margin="0" IsEnabled="{Binding CanRestore}"/></DataTemplate></GridViewColumn.CellTemplate>
@@ -161,7 +184,7 @@ public class WinTuneRow : INotifyPropertyChanged {
         <Button x:Name="btnRefresh" Content="Refresh status"/>
         <Button x:Name="btnRestartExplorer" Content="Restart Explorer"/>
       </StackPanel>
-      <TextBlock x:Name="txtSummary" Margin="2,8,0,0" FontWeight="SemiBold" Foreground="#555"/>
+      <TextBlock x:Name="txtSummary" Margin="2,8,0,0" FontWeight="SemiBold" Foreground="{DynamicResource TextMuted}"/>
     </StackPanel>
         </Grid>
       </TabItem>
@@ -172,7 +195,7 @@ public class WinTuneRow : INotifyPropertyChanged {
             <StackPanel.Resources>
               <Style TargetType="Button" BasedOn="{StaticResource AccentButton}"><Setter Property="MinWidth" Value="152"/><Setter Property="Margin" Value="0,0,8,8"/></Style>
             </StackPanel.Resources>
-            <TextBlock Text="Run common network-administration commands. Output appears in the log below. WinTune is already running as administrator." Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+            <TextBlock Text="Run common network-administration commands. Output appears in the log below. WinTune is already running as administrator." Foreground="{DynamicResource TextMuted}" TextWrapping="Wrap" Margin="0,0,0,12"/>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
               <TextBlock Text="Target host (ping / traceroute / nslookup / test):" VerticalAlignment="Center" Margin="0,0,8,0"/>
               <TextBox x:Name="txtNetTarget" Text="8.8.8.8" Width="220" Height="26" VerticalContentAlignment="Center"/>
@@ -240,8 +263,8 @@ public class WinTuneRow : INotifyPropertyChanged {
 
 function Show-WinTuneGui {
     $script:win = [Windows.Markup.XamlReader]::Load((New-Object System.Xml.XmlNodeReader $xaml))
-    foreach ($n in 'cmbTemplate','btnSaveTpl','btnDelTpl','btnExport','btnOpenTpl','txtTplDesc','lv','chkRp','chkDry','chkDefault','chkConfirm',
-                   'chkForce','txtSearch','chkHideNA','chkRisk','btnApply','btnRestoreChecked','btnRestoreAll','btnAll','btnNone',
+    foreach ($n in 'cmbTemplate','btnSaveTpl','btnDelTpl','btnExport','btnCustom','btnOpenTpl','txtTplDesc','lv','chkRp','chkDry','chkDefault','chkConfirm',
+                   'chkForce','txtSearch','chkHideNA','chkRisk','chkDark','btnApply','btnRestoreChecked','btnRestoreAll','btnAll','btnNone',
                    'btnRefresh','btnRestartExplorer','txtSummary','txtLog','txtNetTarget','pnlNet','tabs') {
         Set-Variable -Scope Script -Name $n -Value $script:win.FindName($n)
     }
@@ -260,6 +283,12 @@ function Show-WinTuneGui {
     $disp = (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion' -ErrorAction SilentlyContinue).DisplayVersion
     $script:win.Title = "WinTune  -  $($os.Caption) $disp (build $script:Build)"
 
+    # theme: restore saved choice, then toggle on demand
+    $dark = [bool](Get-Setting 'darkMode' $false)
+    $script:chkDark.IsChecked = $dark
+    Set-Theme $dark
+    $script:chkDark.Add_Click({ Set-Theme ([bool]$script:chkDark.IsChecked) })
+
     $script:LogSink = {
         param($line)
         $script:txtLog.AppendText($line + [Environment]::NewLine)
@@ -269,14 +298,7 @@ function Show-WinTuneGui {
 
     # rows
     $script:rows = New-Object 'System.Collections.ObjectModel.ObservableCollection[WinTuneRow]'
-    foreach ($t in Get-Catalog) {
-        $r = New-Object WinTuneRow
-        $r.Id = $t.Id; $r.Name = $t.Name; $r.Category = $t.Category; $r.Risk = $t.Risk
-        $r.Description = $t.Desc; $r.Reversible = (Test-Reversible $t)
-        $r.Needs = switch ("$($t.After)") { 'explorer' { 'Explorer' } 'signout' { 'Sign out' } 'reboot' { 'Restart' } default { '' } }
-        if (-not $r.Reversible) { $r.Description += '  (one-way)' }
-        $script:rows.Add($r)
-    }
+    Build-Rows
     $script:view = [System.Windows.Data.CollectionViewSource]::GetDefaultView($script:rows)
     $script:view.GroupDescriptions.Add((New-Object System.Windows.Data.PropertyGroupDescription 'Category'))
     $script:view.Filter = {
@@ -323,6 +345,16 @@ function Show-WinTuneGui {
             } catch { [System.Windows.MessageBox]::Show("$_", 'WinTune', 'OK', 'Error') | Out-Null }
         }
     })
+    $script:btnCustom.Add_Click({
+        $f = Show-CustomTweakDialog
+        if (-not $f) { return }
+        try {
+            Save-CustomTweak -Name $f.Name -Category $f.Category -Risk $f.Risk -Desc $f.Desc -RegPath $f.RegPath -ValueName $f.ValueName -Type $f.Type -Value $f.Value | Out-Null
+            Build-Rows; Refresh-Status
+            $script:txtSearch.Text = $f.Name
+            [System.Windows.MessageBox]::Show("Added custom tweak '$($f.Name)'. It is now in the list (filtered to it) - check it and Apply.", 'WinTune') | Out-Null
+        } catch { [System.Windows.MessageBox]::Show("$_", 'WinTune', 'OK', 'Error') | Out-Null }
+    })
     $script:btnOpenTpl.Add_Click({ Start-Process explorer.exe $script:TemplateDir })
     $script:btnAll.Add_Click({ foreach ($r in $script:rows) { if ($r.Status -ne 'N/A') { $r.Checked = $true } } })
     $script:btnNone.Add_Click({ foreach ($r in $script:rows) { $r.Checked = $false } })
@@ -365,6 +397,90 @@ function Show-WinTuneGui {
 
 function Update-Ui { $script:win.Dispatcher.Invoke([Action]{}, [System.Windows.Threading.DispatcherPriority]::Background) }
 
+# Modal form for adding a user registry tweak. Returns a hashtable of fields, or $null on cancel.
+function Show-CustomTweakDialog {
+    [xml]$dx = @'
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add custom registry tweak" Width="580" SizeToContent="Height" WindowStartupLocation="CenterOwner"
+        FontFamily="Segoe UI" FontSize="13" ResizeMode="NoResize" Background="#F3F3F3">
+  <StackPanel Margin="18">
+    <TextBlock Text="Define a registry value to apply. WinTune records the original so it can be restored like any tweak." TextWrapping="Wrap" Foreground="#555" Margin="0,0,0,12"/>
+    <Grid>
+      <Grid.ColumnDefinitions><ColumnDefinition Width="130"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="36"/><RowDefinition Height="36"/><RowDefinition Height="36"/><RowDefinition Height="36"/>
+        <RowDefinition Height="36"/><RowDefinition Height="36"/><RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <TextBlock Grid.Row="0" Text="Name" VerticalAlignment="Center"/>
+      <TextBox   Grid.Row="0" Grid.Column="1" x:Name="dName" Height="26" VerticalContentAlignment="Center"/>
+      <TextBlock Grid.Row="1" Text="Category" VerticalAlignment="Center"/>
+      <TextBox   Grid.Row="1" Grid.Column="1" x:Name="dCat" Height="26" Text="Custom" VerticalContentAlignment="Center"/>
+      <TextBlock Grid.Row="2" Text="Risk" VerticalAlignment="Center"/>
+      <ComboBox  Grid.Row="2" Grid.Column="1" x:Name="dRisk" Height="26"><ComboBoxItem Content="low"/><ComboBoxItem Content="med" IsSelected="True"/><ComboBoxItem Content="high"/></ComboBox>
+      <TextBlock Grid.Row="3" Text="Registry path" VerticalAlignment="Center"/>
+      <TextBox   Grid.Row="3" Grid.Column="1" x:Name="dPath" Height="26" VerticalContentAlignment="Center"/>
+      <TextBlock Grid.Row="4" Text="Value name" VerticalAlignment="Center"/>
+      <TextBox   Grid.Row="4" Grid.Column="1" x:Name="dValName" Height="26" VerticalContentAlignment="Center"/>
+      <TextBlock Grid.Row="5" Text="Type / Value" VerticalAlignment="Center"/>
+      <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal">
+        <ComboBox x:Name="dType" Width="120" Height="26"><ComboBoxItem Content="DWord" IsSelected="True"/><ComboBoxItem Content="String"/><ComboBoxItem Content="QWord"/><ComboBoxItem Content="ExpandString"/></ComboBox>
+        <TextBox x:Name="dVal" Width="220" Height="26" Margin="8,0,0,0" VerticalContentAlignment="Center"/>
+      </StackPanel>
+      <TextBlock Grid.Row="6" Text="Description" VerticalAlignment="Top" Margin="0,6,0,0"/>
+      <TextBox   Grid.Row="6" Grid.Column="1" x:Name="dDesc" Height="54" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+    </Grid>
+    <TextBlock x:Name="dHint" Foreground="#555" FontSize="11" TextWrapping="Wrap" Margin="0,10,0,0"
+               Text="Path must start with HKLM:\ or HKCU:\ . For a DWord/QWord enter a number; leave Value name blank to set the key's (default) value."/>
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+      <Button x:Name="dOk" Content="Add tweak" MinWidth="110" Padding="12,6" Margin="0,0,8,0"/>
+      <Button x:Name="dCancel" Content="Cancel" MinWidth="90" Padding="12,6"/>
+    </StackPanel>
+  </StackPanel>
+</Window>
+'@
+    $dlg = [Windows.Markup.XamlReader]::Load((New-Object System.Xml.XmlNodeReader $dx))
+    $dlg.Owner = $script:win
+    $g = { param($n) $dlg.FindName($n) }
+    $result = $null
+    (& $g 'dOk').Add_Click({
+        $dlg.Tag = @{
+            Name = (& $g 'dName').Text; Category = (& $g 'dCat').Text; Risk = "$((& $g 'dRisk').SelectedItem.Content)"
+            RegPath = (& $g 'dPath').Text; ValueName = (& $g 'dValName').Text
+            Type = "$((& $g 'dType').SelectedItem.Content)"; Value = (& $g 'dVal').Text; Desc = (& $g 'dDesc').Text
+        }
+        $dlg.DialogResult = $true
+    })
+    (& $g 'dCancel').Add_Click({ $dlg.DialogResult = $false })
+    if ($dlg.ShowDialog()) { $dlg.Tag } else { $null }
+}
+
+function Set-Theme {
+    param([bool]$Dark)
+    $pal = if ($Dark) {
+        @{ WinBg = '#1E1E1E'; FieldBg = '#252526'; TabHeaderBg = '#2D2D30'; TextMain = '#E8E8E8'; TextMuted = '#A8A8A8'; EdgeBrush = '#3F3F46'; ButtonBg = '#3A3A3D'; ButtonFg = '#E8E8E8' }
+    } else {
+        @{ WinBg = '#F3F3F3'; FieldBg = '#FFFFFF'; TabHeaderBg = '#E6E6E6'; TextMain = '#1F1F1F'; TextMuted = '#555555'; EdgeBrush = '#CFCFCF'; ButtonBg = '#FFFFFF'; ButtonFg = '#1F1F1F' }
+    }
+    $bc = New-Object System.Windows.Media.BrushConverter
+    foreach ($k in $pal.Keys) {
+        $b = $bc.ConvertFromString($pal[$k]); $b.Freeze()
+        $script:win.Resources[$k] = $b
+    }
+    try { Save-Setting 'darkMode' $Dark } catch {}
+}
+
+function Build-Rows {
+    $script:rows.Clear()
+    foreach ($t in Get-Catalog) {
+        $r = New-Object WinTuneRow
+        $r.Id = $t.Id; $r.Name = $t.Name; $r.Category = $t.Category; $r.Risk = $t.Risk
+        $r.Description = $t.Desc; $r.Reversible = (Test-Reversible $t)
+        $r.Needs = switch ("$($t.After)") { 'explorer' { 'Explorer' } 'signout' { 'Sign out' } 'reboot' { 'Restart' } default { '' } }
+        if (-not $r.Reversible) { $r.Description += '  (one-way)' }
+        $script:rows.Add($r)
+    }
+}
+
 # Only prompts when "Ask before each change" is ticked; otherwise proceeds silently.
 function Confirm-Act { param([string]$Message, [string]$Icon = 'Question')
     if (-not $script:chkConfirm.IsChecked) { return $true }
@@ -374,6 +490,10 @@ function Confirm-Act { param([string]$Message, [string]$Icon = 'Question')
 # -------------------------------------------------------------------- Network tools tab
 function Confirm-Reboot { param([string]$Message)
     [System.Windows.MessageBox]::Show("$Message`n`nProceed?", 'WinTune - Network', 'YesNo', 'Warning') -eq 'Yes'
+}
+# System-changing network actions always prompt first; read-only ones (ipconfig, ping, etc.) do not.
+function Confirm-NetChange { param([string]$Message)
+    [System.Windows.MessageBox]::Show($Message, 'WinTune - confirm network change', 'YesNo', 'Question') -eq 'Yes'
 }
 
 # Runs a network command and writes its raw output to the shared log pane (and the log file).
@@ -414,11 +534,11 @@ function Invoke-NetAction {
         'netstat'        { Invoke-NetCmd 'Active connections' { netstat -ano } }
         'displaydns'     { Invoke-NetCmd 'DNS resolver cache' { ipconfig /displaydns } }
         'publicip'       { Invoke-NetCmd 'Public IP address' { try { 'Public IP: ' + (Invoke-RestMethod -Uri 'https://api.ipify.org' -TimeoutSec 8) } catch { 'Could not reach api.ipify.org (no internet, or blocked).' } } }
-        'release'        { Invoke-NetCmd 'Release IP (ipconfig /release)' { ipconfig /release } }
-        'renew'          { Invoke-NetCmd 'Renew IP (ipconfig /renew)' { ipconfig /renew } }
-        'releaserenew'   { Invoke-NetCmd 'Release + Renew' { ipconfig /release; ipconfig /renew } }
-        'flushdns'       { Invoke-NetCmd 'Flush DNS cache' { ipconfig /flushdns } }
-        'registerdns'    { Invoke-NetCmd 'Register DNS' { ipconfig /registerdns } }
+        'release'        { if (Confirm-NetChange 'Release the current IP address (ipconfig /release)? Network connectivity drops until you renew.') { Invoke-NetCmd 'Release IP (ipconfig /release)' { ipconfig /release } } }
+        'renew'          { if (Confirm-NetChange 'Renew the IP address from DHCP (ipconfig /renew)?') { Invoke-NetCmd 'Renew IP (ipconfig /renew)' { ipconfig /renew } } }
+        'releaserenew'   { if (Confirm-NetChange 'Release then renew the IP address? Network drops briefly during the release.') { Invoke-NetCmd 'Release + Renew' { ipconfig /release; ipconfig /renew } } }
+        'flushdns'       { if (Confirm-NetChange 'Flush the DNS resolver cache (ipconfig /flushdns)?') { Invoke-NetCmd 'Flush DNS cache' { ipconfig /flushdns } } }
+        'registerdns'    { if (Confirm-NetChange 'Re-register this computer''s DNS records (ipconfig /registerdns)?') { Invoke-NetCmd 'Register DNS' { ipconfig /registerdns } } }
         'ping'           { Invoke-NetCmd "Ping $t" { $h = $script:txtNetTarget.Text.Trim(); if (-not $h) { $h = '8.8.8.8' }; ping -n 4 $h } }
         'tracert'        { Invoke-NetCmd "Traceroute $t" { $h = $script:txtNetTarget.Text.Trim(); if (-not $h) { $h = '8.8.8.8' }; tracert -d -h 20 -w 1000 $h } }
         'nslookup'       { Invoke-NetCmd "nslookup $t" { $h = $script:txtNetTarget.Text.Trim(); if (-not $h) { $h = '8.8.8.8' }; nslookup $h } }

@@ -1,0 +1,17 @@
+{
+  "name": "VM / Deployment",
+  "description": "Tuned for virtual machines and image deployment: strips telemetry, ads and bloat; maximises performance (visual effects, High Performance power plan, no hibernate, SysMain off, faster menus, foreground priority); enables Remote Desktop; skips the first-logon animation; and bypasses the Microsoft-account requirement at OOBE so the image deploys to a local account. Review the Remote Desktop and OOBE items for your environment. Pair with 'Export for deployment' or apply to an offline image.",
+  "builtIn": true,
+  "order": 3,
+  "tweaks": [
+    "privacy.telemetry", "privacy.tasks", "privacy.adid", "privacy.activity", "privacy.feedback",
+    "ads.suggestions", "ads.consumer", "ads.bingsearch",
+    "ai.copilot", "ai.recall", "ui.widgets", "ui.chat",
+    "explorer.ext",
+    "perf.gamedvr", "perf.startupdelay", "perf.dodownload", "perf.bgapps", "perf.visualfx", "perf.transparency", "perf.powerplan", "perf.hibernate", "perf.sysmain", "perf.menudelay", "perf.priorityforeground",
+    "edge.nag",
+    "apps.bing", "apps.tips", "apps.officehub", "apps.solitaire", "apps.feedbackhub", "apps.clipchamp", "apps.cortana", "apps.teams", "apps.devhome", "apps.copilot", "apps.quickassist",
+    "oobe.bypassnro", "vm.firstlogonanim", "vm.rdp", "vm.nosleep",
+    "cleanup.temp"
+  ]
+}

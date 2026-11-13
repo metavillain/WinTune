@@ -81,6 +81,13 @@ The **Network tools** tab has one-click buttons for common network-admin command
 ## Built-in templates
 - **Base (recommended)** and **Aggressive** — the standard cleanup sets.
 - **No Security (disable Defender & SmartScreen)** — turns off Defender and SmartScreen entirely. High risk, for isolated/test machines or when you run another AV; turn off Tamper Protection first, and it's reversible via Restore.
+- **VM / Deployment** — tuned for virtual machines and image deployment: strips bloat, maxes performance, enables Remote Desktop, skips the first-logon animation, and bypasses the Microsoft-account requirement at OOBE (local-account setup). Pair it with **Export for deployment** or apply it to an offline image.
+
+## Dark mode & custom tweaks
+- **Dark mode** — tick the box on the filter row; the choice is remembered between runs.
+- **Add custom tweak…** — define your own registry edit (path, value name, type, value). It joins the list and applies/restores like any built-in tweak. Custom tweaks are saved to `%ProgramData%\WinTune\custom-tweaks.json`.
+- The **Performance** category holds common optimization regedits (visual effects, power plan, foreground/menu/priority tweaks, game responsiveness, etc.).
+- **OOBE account bypass:** the *Bypass Microsoft-account requirement at setup* tweak (Deployment category) is registry-only, so it works live, in an exported deploy script, and baked into an offline image.
 
 ## Notes
 - Your edition limits some policies. For example, setting telemetry to 0 only fully takes effect on Enterprise/Education. On Home/Pro it drops to the lowest level allowed.

@@ -247,6 +247,48 @@ Tweaks = @(
    Revert='DISM /Online /Set-ReservedStorageState /State:Enabled'
    Test='[bool](& DISM /Online /Get-ReservedStorageState | Select-String ''Disabled'')' },
 
+@{ Id='perf.menudelay'; Name='Faster menu show delay'; Category='Performance'; Risk='low'; After='signout'
+   Desc='Removes the delay before menus and submenus open (MenuShowDelay = 0). Takes effect after sign-out.'
+   Reg=@( @{ P='HKCU:\Control Panel\Desktop'; T='String'; V=@{ MenuShowDelay='0' } } ) },
+
+@{ Id='perf.priorityforeground'; Name='Prioritise the foreground app'; Category='Performance'; Risk='low'
+   Desc='Gives the window you are using more CPU priority (Win32PrioritySeparation = 26), so the active app feels snappier.'
+   Reg=@( @{ P='HKLM:\SYSTEM\CurrentControlSet\Control\PriorityControl'; T='DWord'; V=@{ Win32PrioritySeparation=26 } } ) },
+
+@{ Id='perf.gameresponsiveness'; Name='Multimedia / game responsiveness'; Category='Performance'; Risk='low'
+   Desc='Lets games and multimedia use the CPU without reservation (SystemResponsiveness = 0) and raises GPU/CPU priority for games.'
+   Reg=@( @{ P='HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile'; T='DWord'; V=@{ SystemResponsiveness=0 } },
+          @{ P='HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games'; T='DWord'; V=@{ 'GPU Priority'=8; Priority=6 } },
+          @{ P='HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games'; T='String'; V=@{ 'Scheduling Category'='High'; 'SFIO Priority'='High' } } ) },
+
+@{ Id='perf.autoendtasks'; Name='Auto-close hung apps at shutdown'; Category='Performance'; Risk='med'
+   Desc='Lets Windows end unresponsive apps automatically at shutdown instead of waiting (AutoEndTasks = 1). Unsaved work in a frozen app could be lost.'
+   Reg=@( @{ P='HKCU:\Control Panel\Desktop'; T='String'; V=@{ AutoEndTasks='1' } } ) },
+
+@{ Id='perf.nolowdisk'; Name='Stop low-disk-space warnings'; Category='Performance'; Risk='low'
+   Desc='Disables the "Low Disk Space" notification balloon.'
+   Reg=@( @{ P='HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer'; T='DWord'; V=@{ NoLowDiskSpaceChecks=1 } } ) },
+
+# ---------------- Deployment / VM / OOBE ----------------
+@{ Id='oobe.bypassnro'; Name='Bypass Microsoft-account requirement at setup (OOBE)'; Category='Deployment'; Risk='med'
+   Desc='Sets BypassNRO so Windows Setup offers an "I don''t have internet" path, letting setup finish with a LOCAL account instead of forcing a Microsoft sign-in. Most useful baked into an image before deployment; on this PC it affects the next out-of-box setup only. Offline-image safe.'
+   Reg=@( @{ P='HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OOBE'; T='DWord'; V=@{ BypassNRO=1 } } ) },
+
+@{ Id='vm.firstlogonanim'; Name='Skip the first sign-in animation'; Category='Deployment'; Risk='low'
+   Desc='Skips the "Hi / we''re getting things ready" first-logon animation for new accounts - faster first boot, handy for VMs and images. Offline-image safe.'
+   Reg=@( @{ P='HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System'; T='DWord'; V=@{ EnableFirstLogonAnimation=0 } } ) },
+
+@{ Id='vm.rdp'; Name='Enable Remote Desktop'; Category='Deployment'; Risk='med'
+   Desc='Turns on Remote Desktop (RDP) and opens the firewall for it - useful for headless VMs. Only enable on trusted networks. Restore turns it off again. (The firewall part needs the live system; the registry part also applies to an offline image.)'
+   Reg=@( @{ P='HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server'; T='DWord'; V=@{ fDenyTSConnections=0 } } )
+   Apply='Enable-NetFirewallRule -DisplayGroup "Remote Desktop" -ErrorAction SilentlyContinue'
+   Revert='Disable-NetFirewallRule -DisplayGroup "Remote Desktop" -ErrorAction SilentlyContinue' },
+
+@{ Id='vm.nosleep'; Name='Never sleep or turn off the display'; Category='Deployment'; Risk='low'
+   Desc='Sets the power plan to never sleep or blank the screen on AC power - keeps VMs and always-on machines responsive. Restore returns to Windows defaults.'
+   Apply='powercfg /change standby-timeout-ac 0; powercfg /change monitor-timeout-ac 0; powercfg /change hibernate-timeout-ac 0'
+   Revert='powercfg /change standby-timeout-ac 30; powercfg /change monitor-timeout-ac 10; powercfg /change hibernate-timeout-ac 180' },
+
 # ---------------- Edge ----------------
 @{ Id='edge.nag'; Name='Quiet Microsoft Edge'; Category='Edge'; Risk='low'
    Desc='Disables first-run, startup boost, background mode, shopping assistant, recommendations and sidebar via policy (Edge will say "managed by your organisation").'

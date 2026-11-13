@@ -57,11 +57,12 @@ if ($isCore -or (-not $isAdmin -and -not $readOnly)) {
 function Resolve-Ids {
     param([string[]]$Names)
     $Names = @($Names | ForEach-Object { $_ -split ',' } | ForEach-Object { $_.Trim() } | Where-Object { $_ })
-    $catalog = Get-Catalog
+    $catIds = @{}; foreach ($c in Get-Catalog) { $catIds[$c.Id] = $true }   # hoisted out of the loop
+    $templates = @(Get-Templates)
     $ids = foreach ($n in $Names) {
-        $tpl = Get-Templates | Where-Object { $_.Name -eq $n -or [IO.Path]::GetFileNameWithoutExtension($_.File) -eq $n } | Select-Object -First 1
+        $tpl = $templates | Where-Object { $_.Name -eq $n -or $_.Key -eq $n -or [IO.Path]::GetFileNameWithoutExtension("$($_.File)") -eq $n } | Select-Object -First 1
         if ($tpl) { $tpl.Tweaks }
-        elseif ($catalog | Where-Object { $_.Id -eq $n }) { $n }
+        elseif ($catIds.ContainsKey($n)) { $n }
         else { Write-Log "'$n' is not a template name or tweak id" 'WARN' }
     }
     @($ids | Select-Object -Unique)

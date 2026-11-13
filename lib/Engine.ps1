@@ -12,6 +12,8 @@ $script:DataDir = Join-Path $env:ProgramData 'WinTune'
 $script:StateFile = Join-Path $script:DataDir 'state.json'
 $script:LogDir  = Join-Path $script:DataDir 'logs'
 $script:CatalogFile = if ($script:AppRoot) { Join-Path $script:AppRoot 'data\tweaks.psd1' } else { $null }
+$script:CustomFile  = Join-Path $script:DataDir 'custom-tweaks.json'   # user-created registry tweaks
+$script:SettingsFile = Join-Path $script:DataDir 'settings.json'       # small UI prefs (e.g. dark mode)
 # Dev: templates live beside the source. Bundle (no source on disk): user templates live under ProgramData.
 $script:TemplateDir = if ($script:AppRoot -and (Test-Path (Join-Path $script:AppRoot 'templates'))) {
     Join-Path $script:AppRoot 'templates'
@@ -40,17 +42,73 @@ function Write-Log {
 
 function Has { param($Hash, [string]$Key) $Hash -is [hashtable] -and $Hash.ContainsKey($Key) -and $null -ne $Hash[$Key] }
 
+# ---------------------------------------------------------------- small UI settings
+function Get-Setting {
+    param([string]$Name, $Default = $null)
+    if (-not (Test-Path $script:SettingsFile)) { return $Default }
+    try { $s = Get-Content -Raw -Path $script:SettingsFile | ConvertFrom-Json; if ($s.PSObject.Properties.Name -contains $Name) { return $s.$Name } } catch {}
+    $Default
+}
+function Save-Setting {
+    param([string]$Name, $Value)
+    $s = [ordered]@{}
+    if (Test-Path $script:SettingsFile) { try { (Get-Content -Raw -Path $script:SettingsFile | ConvertFrom-Json).PSObject.Properties | ForEach-Object { $s[$_.Name] = $_.Value } } catch {} }
+    $s[$Name] = $Value
+    try { ConvertTo-Json -InputObject $s | Set-Content -Path $script:SettingsFile -Encoding UTF8 } catch {}
+}
+
 # ---------------------------------------------------------------- catalog & templates
 function Get-Catalog {
     if ($script:CatalogCache) { return $script:CatalogCache }
     if ($script:CatalogFile -and (Test-Path $script:CatalogFile)) {
-        $script:CatalogCache = @((Import-PowerShellDataFile -Path $script:CatalogFile).Tweaks)
+        $base = @((Import-PowerShellDataFile -Path $script:CatalogFile).Tweaks)
     } elseif ($script:EmbeddedCatalog) {
         $tmp = Join-Path $script:DataDir '_catalog.psd1'
         Set-Content -Path $tmp -Value $script:EmbeddedCatalog -Encoding UTF8
-        $script:CatalogCache = @((Import-PowerShellDataFile -Path $tmp).Tweaks)
+        $base = @((Import-PowerShellDataFile -Path $tmp).Tweaks)
     } else { throw 'WinTune tweak catalog not found.' }
+    $script:CatalogCache = @($base + (Get-CustomTweaks))
     $script:CatalogCache
+}
+
+# User-created registry tweaks live in a JSON file under ProgramData and merge into the catalog.
+function ConvertFrom-CustomJson {
+    param($J)
+    $reg = foreach ($r in @($J.reg)) { @{ P = $r.path; T = $r.type; V = @{ "$($r.name)" = $r.value } } }
+    @{ Id = $J.id; Name = $J.name; Category = $(if ($J.category) { $J.category } else { 'Custom' })
+       Risk = $(if ($J.risk) { $J.risk } else { 'med' }); Desc = $J.desc; Custom = $true; Reg = @($reg) }
+}
+function Get-CustomTweaks {
+    if (-not (Test-Path $script:CustomFile)) { return @() }
+    try { $j = Get-Content -Raw -Path $script:CustomFile | ConvertFrom-Json } catch { return @() }
+    @(@($j) | Where-Object { $_ } | ForEach-Object { ConvertFrom-CustomJson $_ })
+}
+function Save-CustomTweak {
+    param([string]$Name, [string]$Category, [string]$Risk, [string]$Desc, [string]$RegPath, [string]$ValueName, [string]$Type, $Value)
+    if (-not $Name)    { throw 'A name is required.' }
+    if (-not $RegPath) { throw 'A registry path is required.' }
+    if ($RegPath -notmatch '^HK(LM|CU):\\') { throw 'Registry path must start with HKLM:\ or HKCU:\' }
+    if (-not $ValueName) { $ValueName = '(default)' }
+    if ($Type -in 'DWord', 'QWord') { $Value = [int64]$Value }
+    $slug = ($Name -replace '[^\w]', '').ToLower(); if (-not $slug) { $slug = 'tweak' }
+    $entry = [ordered]@{ id = "custom.$slug.$(Get-Random -Maximum 99999)"; name = $Name
+                         category = $(if ($Category) { $Category } else { 'Custom' }); risk = $(if ($Risk) { $Risk } else { 'med' })
+                         desc = $Desc; reg = @(@{ path = $RegPath; type = $Type; name = $ValueName; value = $Value }) }
+    $all = @()
+    if (Test-Path $script:CustomFile) { try { $all = @(Get-Content -Raw -Path $script:CustomFile | ConvertFrom-Json) } catch {} }
+    $all += [pscustomobject]$entry
+    ConvertTo-Json -InputObject @($all) -Depth 6 | Set-Content -Path $script:CustomFile -Encoding UTF8
+    $script:CatalogCache = $null
+    Write-Log "Added custom tweak '$Name' -> $($entry.id)"
+    $entry.id
+}
+function Remove-CustomTweak {
+    param([string]$Id)
+    if (-not (Test-Path $script:CustomFile)) { return }
+    $all = @(Get-Content -Raw -Path $script:CustomFile | ConvertFrom-Json) | Where-Object { $_.id -ne $Id }
+    ConvertTo-Json -InputObject @($all) -Depth 6 | Set-Content -Path $script:CustomFile -Encoding UTF8
+    $script:CatalogCache = $null
+    Write-Log "Removed custom tweak $Id"
 }
 
 function Get-Tweak { param([string]$Id) Get-Catalog | Where-Object { $_.Id -eq $Id } | Select-Object -First 1 }
@@ -494,11 +552,12 @@ function Invoke-WinTune {
     $ConfirmPreference = 'None'
     $ProgressPreference = 'SilentlyContinue'
     $catalog = Get-Catalog
+    $byId = @{}; foreach ($c in $catalog) { $byId[$c.Id] = $c }   # O(1) lookup instead of a scan per id
     if ($Action -eq 'Apply' -and -not $DryRun -and -not $NoRestorePoint) { New-RestorePoint }
     $n = 0; $needs = @{}; $applied = 0; $already = 0; $failed = 0; $skipped = 0
     foreach ($id in $Ids) {
         $n++
-        $t = $catalog | Where-Object { $_.Id -eq $id } | Select-Object -First 1
+        $t = $byId[$id]
         if (-not $t) { Write-Log "Unknown tweak id '$id'" 'WARN'; $failed++; continue }
         if ($OnProgress) { & $OnProgress $n $Ids.Count $t }
         $res = 'failed'
@@ -613,9 +672,14 @@ function Invoke-WinTuneImage {
             $did = $false; $couldnt = $false
             # registry
             foreach ($r in Expand-Reg $t) {
-                $root = switch -Regex ($r.Path) { '^HKLM:\\SYSTEM\\' { 'SYSTEM' } '^HKLM:\\' { 'SOFTWARE' } '^HKCU:\\' { 'DEFAULT' } default { $null } }
+                $root = switch -Regex ($r.Path) { '^HKLM:\\SYSTEM\\' { 'SYSTEM'; break } '^HKLM:\\' { 'SOFTWARE'; break } '^HKCU:\\' { 'DEFAULT'; break } default { $null } }
                 if (-not $root) { continue }
-                $rel = $r.Path -replace '^HK(LM|CU):\\(SYSTEM\\)?', ''
+                # A loaded hive's root IS that subtree, so strip the full prefix (e.g. HKLM:\SOFTWARE\) not just HKLM:\
+                $rel = switch ($root) {
+                    'SOFTWARE' { $r.Path -replace '^HKLM:\\SOFTWARE\\?', '' }
+                    'SYSTEM'   { $r.Path -replace '^HKLM:\\SYSTEM\\?', '' }
+                    'DEFAULT'  { $r.Path -replace '^HKCU:\\?', '' }
+                }
                 $p = $map[$root] + '\' + $rel
                 if ($DryRun) { Write-Log "  ${tag}[$root] set $rel\$($r.Name) = $($r.Value)"; $did = $true; continue }
                 if ($root -notin ($loaded | ForEach-Object { ($_ -split '\\')[1] -replace 'WT_IMG_', '' })) { $couldnt = $true; continue }

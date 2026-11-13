@@ -30,6 +30,7 @@ $catalogB64   = B64 (Join-Path $root 'data\tweaks.psd1')
 $baseB64      = B64 (Join-Path $root 'templates\base.json')
 $aggressiveB64 = B64 (Join-Path $root 'templates\aggressive.json')
 $noSecB64     = B64 (Join-Path $root 'templates\no-security.json')
+$vmB64        = B64 (Join-Path $root 'templates\vm.json')
 $iconPath     = Join-Path $root 'assets\wintune.ico'
 $iconB64      = if (Test-Path $iconPath) { B64 $iconPath } else { '' }
 $engine = Get-Content -Raw (Join-Path $root 'lib\Engine.ps1')
@@ -43,6 +44,7 @@ $header = @"
   'base'        = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('$baseB64'))
   'aggressive'  = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('$aggressiveB64'))
   'no-security' = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('$noSecB64'))
+  'vm'          = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('$vmB64'))
 }
 `$script:EmbeddedIcon = '$iconB64'
 `$script:EmbeddedEngine = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('$engineB64'))
