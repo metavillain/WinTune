@@ -27,27 +27,74 @@ public class WinTuneRow : INotifyPropertyChanged {
         Title="WinTune - Windows 11 debloat &amp; tune" Width="1180" Height="780"
         WindowStartupLocation="CenterScreen" FontFamily="Segoe UI" FontSize="13" Background="#F3F3F3">
   <Window.Resources>
-    <Style TargetType="Button">
-      <Setter Property="Padding" Value="12,5"/><Setter Property="Margin" Value="0,0,8,0"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="#0B5CAD"/>
+    <SolidColorBrush x:Key="MutedBrush" Color="#5A5A5A"/>
+
+    <Style TargetType="Button" x:Key="BaseButton">
+      <Setter Property="Padding" Value="12,6"/>
+      <Setter Property="Margin" Value="0,0,8,0"/>
+      <Setter Property="Background" Value="White"/>
+      <Setter Property="Foreground" Value="#1F1F1F"/>
+      <Setter Property="BorderBrush" Value="#CFCFCF"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="SnapsToDevicePixels" Value="True"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="bd" CornerRadius="5" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource AccentBrush}"/><Setter TargetName="bd" Property="Opacity" Value="0.9"/></Trigger>
+              <Trigger Property="IsPressed" Value="True"><Setter TargetName="bd" Property="Opacity" Value="0.75"/></Trigger>
+              <Trigger Property="IsEnabled" Value="False"><Setter TargetName="bd" Property="Opacity" Value="0.45"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
     </Style>
+    <Style TargetType="Button" BasedOn="{StaticResource BaseButton}"/>
+    <Style TargetType="Button" x:Key="AccentButton" BasedOn="{StaticResource BaseButton}"/>
+
+    <Style TargetType="TextBlock" x:Key="SectionHead">
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="FontSize" Value="11.5"/>
+      <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
+      <Setter Property="Margin" Value="0,12,0,6"/>
+    </Style>
+
+    <Style TargetType="TabItem">
+      <Setter Property="Padding" Value="16,7"/>
+      <Setter Property="FontSize" Value="14"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
+    <Style TargetType="CheckBox"><Setter Property="VerticalAlignment" Value="Center"/></Style>
+    <Style TargetType="TextBox"><Setter Property="Padding" Value="3,2"/></Style>
   </Window.Resources>
   <Grid Margin="12">
     <Grid.RowDefinitions>
-      <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/>
-      <RowDefinition Height="Auto"/><RowDefinition Height="150"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="150"/>
     </Grid.RowDefinitions>
 
-    <DockPanel Grid.Row="0" Margin="0,0,0,6">
-      <TextBlock DockPanel.Dock="Right" x:Name="txtSys" VerticalAlignment="Center" Foreground="#555"/>
-      <StackPanel Orientation="Horizontal">
-        <TextBlock Text="Template:" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold"/>
-        <ComboBox x:Name="cmbTemplate" Width="260" Margin="0,0,8,0" DisplayMemberPath="Name"/>
-        <Button x:Name="btnSaveTpl" Content="Save checked as new template..."/>
-        <Button x:Name="btnDelTpl" Content="Delete template"/>
-        <Button x:Name="btnExport" Content="Export for deployment..."/>
-        <Button x:Name="btnOpenTpl" Content="Open templates folder"/>
-      </StackPanel>
-    </DockPanel>
+    <TabControl Grid.Row="0" Margin="0,0,0,8" x:Name="tabs">
+      <TabItem Header="  Tweaks  ">
+        <Grid Margin="8,10,8,8">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/><RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+
+    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,6">
+      <TextBlock Text="Template:" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold"/>
+      <ComboBox x:Name="cmbTemplate" Width="280" Margin="0,0,8,0" DisplayMemberPath="Name"/>
+      <Button x:Name="btnSaveTpl" Content="Save as template..."/>
+      <Button x:Name="btnDelTpl" Content="Delete"/>
+      <Button x:Name="btnExport" Content="Export for deployment..."/>
+      <Button x:Name="btnOpenTpl" Content="Templates folder"/>
+    </StackPanel>
     <TextBlock Grid.Row="1" x:Name="txtTplDesc" Foreground="#555" TextWrapping="Wrap" Margin="0,0,0,8"/>
 
     <DockPanel Grid.Row="2" Margin="0,0,0,6">
@@ -116,18 +163,86 @@ public class WinTuneRow : INotifyPropertyChanged {
       </StackPanel>
       <TextBlock x:Name="txtSummary" Margin="2,8,0,0" FontWeight="SemiBold" Foreground="#555"/>
     </StackPanel>
+        </Grid>
+      </TabItem>
 
-    <TextBox Grid.Row="5" x:Name="txtLog" IsReadOnly="True" FontFamily="Consolas" FontSize="12"
-             VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="#1E1E1E" Foreground="#DDD"/>
+      <TabItem Header="  Network tools  ">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <StackPanel x:Name="pnlNet" Margin="14">
+            <StackPanel.Resources>
+              <Style TargetType="Button" BasedOn="{StaticResource AccentButton}"><Setter Property="MinWidth" Value="152"/><Setter Property="Margin" Value="0,0,8,8"/></Style>
+            </StackPanel.Resources>
+            <TextBlock Text="Run common network-administration commands. Output appears in the log below. WinTune is already running as administrator." Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+              <TextBlock Text="Target host (ping / traceroute / nslookup / test):" VerticalAlignment="Center" Margin="0,0,8,0"/>
+              <TextBox x:Name="txtNetTarget" Text="8.8.8.8" Width="220" Height="26" VerticalContentAlignment="Center"/>
+            </StackPanel>
+
+            <TextBlock Text="SHOW CONFIGURATION" Style="{StaticResource SectionHead}"/>
+            <WrapPanel>
+              <Button Content="IP config (all)" Tag="ipconfig"/>
+              <Button Content="Network adapters" Tag="adapters"/>
+              <Button Content="IP configuration" Tag="ipconfiguration"/>
+              <Button Content="MAC addresses" Tag="getmac"/>
+              <Button Content="ARP table" Tag="arp"/>
+              <Button Content="Routing table" Tag="route"/>
+              <Button Content="Active connections" Tag="netstat"/>
+              <Button Content="DNS cache" Tag="displaydns"/>
+              <Button Content="Public IP" Tag="publicip"/>
+            </WrapPanel>
+
+            <TextBlock Text="DHCP / DNS" Style="{StaticResource SectionHead}"/>
+            <WrapPanel>
+              <Button Content="Release IP" Tag="release"/>
+              <Button Content="Renew IP" Tag="renew"/>
+              <Button Content="Release + Renew" Tag="releaserenew"/>
+              <Button Content="Flush DNS" Tag="flushdns"/>
+              <Button Content="Register DNS" Tag="registerdns"/>
+            </WrapPanel>
+
+            <TextBlock Text="CONNECTIVITY TESTS" Style="{StaticResource SectionHead}"/>
+            <WrapPanel>
+              <Button Content="Ping" Tag="ping"/>
+              <Button Content="Traceroute" Tag="tracert"/>
+              <Button Content="nslookup" Tag="nslookup"/>
+              <Button Content="Test-NetConnection" Tag="testconn"/>
+            </WrapPanel>
+
+            <TextBlock Text="WI-FI" Style="{StaticResource SectionHead}"/>
+            <WrapPanel>
+              <Button Content="Wi-Fi profiles" Tag="wifiprofiles"/>
+              <Button Content="Wi-Fi status" Tag="wifiinterfaces"/>
+              <Button Content="Show saved Wi-Fi passwords" Tag="wifipasswords" MinWidth="230"/>
+            </WrapPanel>
+
+            <TextBlock Text="REPAIR  (may require a reboot)" Style="{StaticResource SectionHead}" Foreground="#C62828"/>
+            <WrapPanel>
+              <Button Content="Reset Winsock" Tag="winsock"/>
+              <Button Content="Reset TCP/IP stack" Tag="ipreset"/>
+              <Button Content="Full network repair" Tag="fullrepair"/>
+            </WrapPanel>
+
+            <TextBlock Text="OPEN" Style="{StaticResource SectionHead}"/>
+            <WrapPanel>
+              <Button Content="Network Connections" Tag="ncpa"/>
+              <Button Content="Windows Firewall" Tag="firewall"/>
+            </WrapPanel>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+    </TabControl>
+
+    <TextBox Grid.Row="1" x:Name="txtLog" IsReadOnly="True" FontFamily="Consolas" FontSize="12"
+             VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="#1E1E1E" Foreground="#DDD" Padding="6"/>
   </Grid>
 </Window>
 '@
 
 function Show-WinTuneGui {
     $script:win = [Windows.Markup.XamlReader]::Load((New-Object System.Xml.XmlNodeReader $xaml))
-    foreach ($n in 'cmbTemplate','btnSaveTpl','btnDelTpl','btnExport','btnOpenTpl','txtTplDesc','txtSys','lv','chkRp','chkDry','chkDefault','chkConfirm',
+    foreach ($n in 'cmbTemplate','btnSaveTpl','btnDelTpl','btnExport','btnOpenTpl','txtTplDesc','lv','chkRp','chkDry','chkDefault','chkConfirm',
                    'chkForce','txtSearch','chkHideNA','chkRisk','btnApply','btnRestoreChecked','btnRestoreAll','btnAll','btnNone',
-                   'btnRefresh','btnRestartExplorer','txtSummary','txtLog') {
+                   'btnRefresh','btnRestartExplorer','txtSummary','txtLog','txtNetTarget','pnlNet','tabs') {
         Set-Variable -Scope Script -Name $n -Value $script:win.FindName($n)
     }
 
@@ -143,7 +258,7 @@ function Show-WinTuneGui {
 
     $os = Get-CimInstance Win32_OperatingSystem
     $disp = (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion' -ErrorAction SilentlyContinue).DisplayVersion
-    $script:txtSys.Text = "$($os.Caption) $disp (build $script:Build)"
+    $script:win.Title = "WinTune  -  $($os.Caption) $disp (build $script:Build)"
 
     $script:LogSink = {
         param($line)
@@ -215,6 +330,12 @@ function Show-WinTuneGui {
     $script:btnRestartExplorer.Add_Click({
         if (Confirm-Act 'Restart Windows Explorer now? The taskbar will flicker briefly.') { Restart-Explorer }
     })
+    # Network tools tab: one bubbling handler dispatches on each button's Tag
+    $script:pnlNet.AddHandler([System.Windows.Controls.Primitives.ButtonBase]::ClickEvent, [System.Windows.RoutedEventHandler]{
+        param($s, $e)
+        $tag = "$($e.OriginalSource.Tag)"
+        if ($tag) { Invoke-NetAction $tag }
+    })
 
     $script:btnApply.Add_Click({
         $ids = @($script:rows | Where-Object { $_.Checked -and $_.Status -ne 'N/A' } | ForEach-Object { $_.Id })
@@ -248,6 +369,70 @@ function Update-Ui { $script:win.Dispatcher.Invoke([Action]{}, [System.Windows.T
 function Confirm-Act { param([string]$Message, [string]$Icon = 'Question')
     if (-not $script:chkConfirm.IsChecked) { return $true }
     [System.Windows.MessageBox]::Show($Message, 'WinTune', 'YesNo', $Icon) -eq 'Yes'
+}
+
+# -------------------------------------------------------------------- Network tools tab
+function Confirm-Reboot { param([string]$Message)
+    [System.Windows.MessageBox]::Show("$Message`n`nProceed?", 'WinTune - Network', 'YesNo', 'Warning') -eq 'Yes'
+}
+
+# Runs a network command and writes its raw output to the shared log pane (and the log file).
+function Invoke-NetCmd {
+    param([string]$Title, [scriptblock]$Action)
+    $stamp = Get-Date -Format 'HH:mm:ss'
+    $script:txtLog.AppendText("`r`n===== [$stamp] $Title =====`r`n"); $script:txtLog.ScrollToEnd()
+    $script:win.Cursor = 'Wait'; Update-Ui
+    $text = ''
+    try { $text = (& $Action 2>&1 | Out-String).TrimEnd() } catch { $text = "error: $($_.Exception.Message)" }
+    if (-not $text) { $text = '(done)' }
+    $script:txtLog.AppendText($text + "`r`n"); $script:txtLog.ScrollToEnd()
+    $script:win.Cursor = $null
+    try { Add-Content -Path (Join-Path $script:LogDir ((Get-Date -Format 'yyyyMMdd') + '.log')) -Value "[$Title]`r`n$text" -ErrorAction Stop } catch {}
+}
+
+function Get-WifiPasswords {
+    $names = @((netsh wlan show profiles) | Where-Object { $_ -match 'All User Profile\s*:\s*(.+)$' } | ForEach-Object { $Matches[1].Trim() })
+    if (-not $names) { return 'No saved Wi-Fi profiles found.' }
+    $lines = foreach ($n in $names) {
+        $info = netsh wlan show profile name="$n" key=clear
+        $key = ($info | Where-Object { $_ -match 'Key Content\s*:\s*(.+)$' } | ForEach-Object { $Matches[1].Trim() } | Select-Object -First 1)
+        '{0,-32} {1}' -f $n, $(if ($key) { $key } else { '(open network / no stored key)' })
+    }
+    "Saved Wi-Fi networks and passwords:`r`n" + ($lines -join "`r`n")
+}
+
+function Invoke-NetAction {
+    param([string]$Tag)
+    $t = $script:txtNetTarget.Text.Trim(); if (-not $t) { $t = '8.8.8.8' }
+    switch ($Tag) {
+        'ipconfig'       { Invoke-NetCmd 'ipconfig /all' { ipconfig /all } }
+        'adapters'       { Invoke-NetCmd 'Network adapters' { Get-NetAdapter | Sort-Object Name | Format-Table Name, Status, LinkSpeed, MacAddress, InterfaceDescription -AutoSize | Out-String -Width 200 } }
+        'ipconfiguration'{ Invoke-NetCmd 'IP configuration' { Get-NetIPConfiguration | Out-String } }
+        'getmac'         { Invoke-NetCmd 'MAC addresses' { getmac /v /fo list } }
+        'arp'            { Invoke-NetCmd 'ARP table' { arp -a } }
+        'route'          { Invoke-NetCmd 'Routing table' { route print } }
+        'netstat'        { Invoke-NetCmd 'Active connections' { netstat -ano } }
+        'displaydns'     { Invoke-NetCmd 'DNS resolver cache' { ipconfig /displaydns } }
+        'publicip'       { Invoke-NetCmd 'Public IP address' { try { 'Public IP: ' + (Invoke-RestMethod -Uri 'https://api.ipify.org' -TimeoutSec 8) } catch { 'Could not reach api.ipify.org (no internet, or blocked).' } } }
+        'release'        { Invoke-NetCmd 'Release IP (ipconfig /release)' { ipconfig /release } }
+        'renew'          { Invoke-NetCmd 'Renew IP (ipconfig /renew)' { ipconfig /renew } }
+        'releaserenew'   { Invoke-NetCmd 'Release + Renew' { ipconfig /release; ipconfig /renew } }
+        'flushdns'       { Invoke-NetCmd 'Flush DNS cache' { ipconfig /flushdns } }
+        'registerdns'    { Invoke-NetCmd 'Register DNS' { ipconfig /registerdns } }
+        'ping'           { Invoke-NetCmd "Ping $t" { $h = $script:txtNetTarget.Text.Trim(); if (-not $h) { $h = '8.8.8.8' }; ping -n 4 $h } }
+        'tracert'        { Invoke-NetCmd "Traceroute $t" { $h = $script:txtNetTarget.Text.Trim(); if (-not $h) { $h = '8.8.8.8' }; tracert -d -h 20 -w 1000 $h } }
+        'nslookup'       { Invoke-NetCmd "nslookup $t" { $h = $script:txtNetTarget.Text.Trim(); if (-not $h) { $h = '8.8.8.8' }; nslookup $h } }
+        'testconn'       { Invoke-NetCmd "Test-NetConnection $t" { $h = $script:txtNetTarget.Text.Trim(); if (-not $h) { $h = '8.8.8.8' }; Test-NetConnection $h -InformationLevel Detailed | Out-String } }
+        'wifiprofiles'   { Invoke-NetCmd 'Wi-Fi profiles' { netsh wlan show profiles } }
+        'wifiinterfaces' { Invoke-NetCmd 'Wi-Fi status' { netsh wlan show interfaces } }
+        'wifipasswords'  { Invoke-NetCmd 'Saved Wi-Fi passwords' { Get-WifiPasswords } }
+        'ncpa'           { Invoke-NetCmd 'Open Network Connections' { Start-Process ncpa.cpl; 'Opened Network Connections.' } }
+        'firewall'       { Invoke-NetCmd 'Open Windows Firewall' { Start-Process wf.msc; 'Opened Windows Defender Firewall.' } }
+        'winsock'        { if (Confirm-Reboot 'Reset the Winsock catalog? Restart the PC afterwards to finish.') { Invoke-NetCmd 'Reset Winsock' { netsh winsock reset } } }
+        'ipreset'        { if (Confirm-Reboot 'Reset the TCP/IP stack? Restart the PC afterwards to finish.') { Invoke-NetCmd 'Reset TCP/IP' { netsh int ip reset } } }
+        'fullrepair'     { if (Confirm-Reboot 'Run full network repair: release/renew, flush DNS, reset Winsock and TCP/IP. Restart the PC afterwards to finish.') { Invoke-NetCmd 'Full network repair' { ipconfig /release; ipconfig /renew; ipconfig /flushdns; netsh winsock reset; netsh int ip reset; 'Done. Restart the PC to finish.' } } }
+        default          { Write-Log "Unknown network action '$Tag'" 'WARN' }
+    }
 }
 
 function Load-Templates {

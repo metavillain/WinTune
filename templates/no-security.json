@@ -1,0 +1,10 @@
+{
+  "name": "No Security (disable Defender & SmartScreen)",
+  "description": "DANGER: turns OFF Microsoft Defender antivirus and SmartScreen entirely, leaving the PC with no built-in malware protection. Only use on an isolated/test machine or if you run another antivirus. Turn off Tamper Protection first (Windows Security > Virus & threat protection) or the Defender changes revert. Fully reversible with Restore.",
+  "builtIn": true,
+  "order": 2,
+  "tweaks": [
+    "sec.smartscreen",
+    "sec.defender"
+  ]
+}

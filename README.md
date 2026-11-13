@@ -75,6 +75,13 @@ The **Notifications** category is a set of toggles (not part of any template) fo
 - **Silence ALL Windows Security notifications** — turns off every Defender notification, threat alerts included (medium risk).
 - **Silence Windows Update restart nags**, **No notifications on the lock screen**, **No tips/tricks/suggestion notifications**, and **Turn off ALL notification banners** (a master off switch for every app's toasts).
 
+## Network tools
+The **Network tools** tab has one-click buttons for common network-admin commands, with output shown in the log pane: `ipconfig /all`, release/renew, flush/register DNS, adapters, ARP/route/netstat, public IP, ping/traceroute/nslookup/Test-NetConnection (against a target host box), Wi-Fi profiles/status/**saved passwords**, open Network Connections / Firewall, and repair actions (reset Winsock, reset TCP/IP, full repair — these prompt and need a reboot).
+
+## Built-in templates
+- **Base (recommended)** and **Aggressive** — the standard cleanup sets.
+- **No Security (disable Defender & SmartScreen)** — turns off Defender and SmartScreen entirely. High risk, for isolated/test machines or when you run another AV; turn off Tamper Protection first, and it's reversible via Restore.
+
 ## Notes
 - Your edition limits some policies. For example, setting telemetry to 0 only fully takes effect on Enterprise/Education. On Home/Pro it drops to the lowest level allowed.
 - `HKCU` tweaks apply to the account that runs WinTune. Run it while signed in as the user you want to clean up.
