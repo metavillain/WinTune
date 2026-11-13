@@ -1,0 +1,22 @@
+{
+  "name": "Aggressive",
+  "description": "Everything in Base plus performance tuning (visual effects, power plan, SysMain/indexing, reserved storage), more privacy lockdown, UI preferences, and heavier app removal (sponsored, Xbox, Phone Link, Mail, Outlook, media, OneDrive, Maps, Clock). Review before applying. Does not touch Defender/SmartScreen.",
+  "builtIn": true,
+  "order": 1,
+  "tweaks": [
+    "privacy.telemetry", "privacy.tasks", "privacy.adid", "privacy.activity", "privacy.feedback", "privacy.typing",
+    "privacy.location", "privacy.wer", "privacy.clipboardsync", "privacy.speech", "privacy.finddevice", "privacy.settingssync",
+    "ads.suggestions", "ads.consumer", "ads.bingsearch",
+    "ai.copilot", "ai.recall",
+    "ui.widgets", "ui.chat", "ui.searchbox", "ui.taskview", "ui.classicmenu",
+    "explorer.ext", "explorer.hidden", "explorer.thispc", "explorer.gallery", "explorer.onedrivenav", "explorer.endtask", "explorer.trayicons",
+    "perf.gamedvr", "perf.startupdelay", "perf.dodownload", "perf.bgapps", "perf.hibernate", "perf.services",
+    "perf.visualfx", "perf.transparency", "perf.powerplan", "perf.pointeraccel", "perf.sysmain", "perf.indexing", "perf.reservedstorage",
+    "edge.nag",
+    "apps.bing", "apps.tips", "apps.officehub", "apps.solitaire", "apps.feedbackhub", "apps.clipchamp",
+    "apps.people", "apps.powerautomate", "apps.mixedreality", "apps.cortana", "apps.teams", "apps.devhome",
+    "apps.copilot", "apps.quickassist", "apps.family", "apps.maps", "apps.soundrec", "apps.clock", "apps.widgets",
+    "apps.sponsored", "apps.xbox", "apps.phonelink", "apps.mailcal", "apps.newoutlook", "apps.todo", "apps.media", "apps.onedrive",
+    "cleanup.temp"
+  ]
+}

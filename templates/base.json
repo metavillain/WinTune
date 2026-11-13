@@ -1,0 +1,20 @@
+{
+  "name": "Base (recommended)",
+  "description": "The commonly recommended, low-risk cleanup: telemetry and ads off, Copilot/Recall/Widgets off, Edge quieted, sensible Explorer defaults, background apps off, and preinstalled junk apps removed. Keeps Xbox, Phone Link, Mail, OneDrive, hibernation and Defender.",
+  "builtIn": true,
+  "order": 0,
+  "tweaks": [
+    "privacy.telemetry", "privacy.tasks", "privacy.adid", "privacy.activity", "privacy.feedback", "privacy.typing",
+    "privacy.clipboardsync", "privacy.speech",
+    "ads.suggestions", "ads.consumer", "ads.bingsearch",
+    "ai.copilot", "ai.recall",
+    "ui.widgets", "ui.chat",
+    "explorer.ext", "explorer.gallery", "explorer.onedrivenav", "explorer.endtask", "explorer.trayicons",
+    "perf.gamedvr", "perf.startupdelay", "perf.dodownload", "perf.bgapps",
+    "edge.nag",
+    "apps.bing", "apps.tips", "apps.officehub", "apps.solitaire", "apps.feedbackhub", "apps.clipchamp",
+    "apps.people", "apps.powerautomate", "apps.mixedreality", "apps.cortana", "apps.teams", "apps.devhome",
+    "apps.copilot", "apps.quickassist", "apps.family",
+    "cleanup.temp"
+  ]
+}
