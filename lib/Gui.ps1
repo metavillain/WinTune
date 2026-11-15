@@ -27,17 +27,25 @@ public class WinTuneRow : INotifyPropertyChanged {
         Title="WinTune - Windows 11 debloat &amp; tune" Width="1180" Height="780"
         WindowStartupLocation="CenterScreen" FontFamily="Segoe UI" FontSize="13" Background="{DynamicResource WinBg}">
   <Window.Resources>
-    <SolidColorBrush x:Key="AccentBrush" Color="#2B88D8"/>
-    <!-- theme brushes (light defaults; Set-Theme swaps them for dark mode) -->
-    <SolidColorBrush x:Key="WinBg"       Color="#F3F3F3"/>
+    <!-- theme brushes (light defaults; Set-Theme swaps every one for dark) -->
+    <SolidColorBrush x:Key="WinBg"       Color="#F4F5F7"/>
     <SolidColorBrush x:Key="FieldBg"     Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="TabHeaderBg" Color="#E6E6E6"/>
-    <SolidColorBrush x:Key="TextMain"    Color="#1F1F1F"/>
-    <SolidColorBrush x:Key="TextMuted"   Color="#555555"/>
-    <SolidColorBrush x:Key="EdgeBrush"   Color="#CFCFCF"/>
+    <SolidColorBrush x:Key="HeaderBg"    Color="#ECEEF2"/>
+    <SolidColorBrush x:Key="TabHeaderBg" Color="#E4E7EC"/>
+    <SolidColorBrush x:Key="TextMain"    Color="#1E2125"/>
+    <SolidColorBrush x:Key="TextMuted"   Color="#687082"/>
+    <SolidColorBrush x:Key="EdgeBrush"   Color="#DADDE3"/>
+    <SolidColorBrush x:Key="FieldBorder" Color="#C4C8D0"/>
+    <SolidColorBrush x:Key="HoverBg"     Color="#EDF3FE"/>
+    <SolidColorBrush x:Key="SelBg"       Color="#DBE8FD"/>
+    <SolidColorBrush x:Key="ScrollThumb" Color="#C4C8D0"/>
     <SolidColorBrush x:Key="ButtonBg"    Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="ButtonFg"    Color="#1F1F1F"/>
+    <SolidColorBrush x:Key="ButtonFg"    Color="#1E2125"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="#2F6FED"/>
+    <SolidColorBrush x:Key="LogBg"       Color="#1B1D23"/>
+    <SolidColorBrush x:Key="LogFg"       Color="#D6D8DE"/>
 
+    <!-- Buttons -->
     <Style TargetType="Button" x:Key="BaseButton">
       <Setter Property="Padding" Value="12,6"/>
       <Setter Property="Margin" Value="0,0,8,0"/>
@@ -50,13 +58,13 @@ public class WinTuneRow : INotifyPropertyChanged {
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="Button">
-            <Border x:Name="bd" CornerRadius="5" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+            <Border x:Name="bd" CornerRadius="6" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
               <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Border>
             <ControlTemplate.Triggers>
-              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/><Setter TargetName="bd" Property="Opacity" Value="0.88"/></Trigger>
-              <Trigger Property="IsPressed" Value="True"><Setter TargetName="bd" Property="Opacity" Value="0.7"/></Trigger>
-              <Trigger Property="IsEnabled" Value="False"><Setter TargetName="bd" Property="Opacity" Value="0.45"/></Trigger>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/><Setter TargetName="bd" Property="Opacity" Value="0.9"/></Trigger>
+              <Trigger Property="IsPressed" Value="True"><Setter TargetName="bd" Property="Opacity" Value="0.72"/></Trigger>
+              <Trigger Property="IsEnabled" Value="False"><Setter TargetName="bd" Property="Opacity" Value="0.4"/></Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate>
         </Setter.Value>
@@ -67,23 +75,25 @@ public class WinTuneRow : INotifyPropertyChanged {
 
     <Style TargetType="TextBlock" x:Key="SectionHead">
       <Setter Property="FontWeight" Value="Bold"/>
-      <Setter Property="FontSize" Value="11.5"/>
+      <Setter Property="FontSize" Value="11"/>
       <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
       <Setter Property="Margin" Value="0,12,0,6"/>
     </Style>
 
+    <!-- Tabs -->
     <Style TargetType="TabItem">
-      <Setter Property="Foreground" Value="{DynamicResource TextMain}"/>
+      <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
       <Setter Property="FontSize" Value="14"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="TabItem">
-            <Border x:Name="tb" Background="{DynamicResource TabHeaderBg}" BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1,1,1,0" CornerRadius="5,5,0,0" Margin="0,0,3,0" Padding="18,7">
+            <Border x:Name="tb" Background="Transparent" BorderThickness="0,0,0,2.5" BorderBrush="Transparent" Margin="0,0,4,0" Padding="16,8">
               <ContentPresenter ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Border>
             <ControlTemplate.Triggers>
-              <Trigger Property="IsSelected" Value="True"><Setter TargetName="tb" Property="Background" Value="{DynamicResource FieldBg}"/><Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/></Trigger>
+              <Trigger Property="IsMouseOver" Value="True"><Setter Property="Foreground" Value="{DynamicResource TextMain}"/></Trigger>
+              <Trigger Property="IsSelected" Value="True"><Setter TargetName="tb" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/><Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/></Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate>
         </Setter.Value>
@@ -92,7 +102,141 @@ public class WinTuneRow : INotifyPropertyChanged {
 
     <Style TargetType="TextBlock"><Setter Property="Foreground" Value="{DynamicResource TextMain}"/></Style>
     <Style TargetType="CheckBox"><Setter Property="VerticalAlignment" Value="Center"/><Setter Property="Foreground" Value="{DynamicResource TextMain}"/></Style>
-    <Style TargetType="TextBox"><Setter Property="Padding" Value="3,2"/><Setter Property="Background" Value="{DynamicResource FieldBg}"/><Setter Property="Foreground" Value="{DynamicResource TextMain}"/></Style>
+
+    <!-- Text inputs -->
+    <Style TargetType="TextBox">
+      <Setter Property="Foreground" Value="{DynamicResource TextMain}"/>
+      <Setter Property="Background" Value="{DynamicResource FieldBg}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource FieldBorder}"/>
+      <Setter Property="CaretBrush" Value="{DynamicResource TextMain}"/>
+      <Setter Property="Padding" Value="4,3"/>
+    </Style>
+    <Style TargetType="TextBox" x:Key="FieldBox" BasedOn="{StaticResource {x:Type TextBox}}">
+      <Setter Property="Height" Value="30"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="TextBox">
+            <Border x:Name="bd" CornerRadius="6" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1">
+              <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- ComboBox -->
+    <Style TargetType="ComboBoxItem">
+      <Setter Property="Foreground" Value="{DynamicResource TextMain}"/>
+      <Setter Property="Padding" Value="9,6"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="ComboBoxItem">
+            <Border x:Name="b" Background="Transparent" Padding="{TemplateBinding Padding}"><ContentPresenter/></Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsHighlighted" Value="True"><Setter TargetName="b" Property="Background" Value="{DynamicResource HoverBg}"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style TargetType="ComboBox">
+      <Setter Property="Foreground" Value="{DynamicResource TextMain}"/>
+      <Setter Property="Height" Value="30"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="ComboBox">
+            <Grid>
+              <ToggleButton Focusable="False" ClickMode="Press" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                <ToggleButton.Template>
+                  <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="bd" CornerRadius="6" Background="{DynamicResource FieldBg}" BorderBrush="{DynamicResource FieldBorder}" BorderThickness="1">
+                      <Path HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Data="M0,0 L4,4 L8,0" Stroke="{DynamicResource TextMuted}" StrokeThickness="1.4"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                      <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/></Trigger>
+                    </ControlTemplate.Triggers>
+                  </ControlTemplate>
+                </ToggleButton.Template>
+              </ToggleButton>
+              <ContentPresenter Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                TextElement.Foreground="{DynamicResource TextMain}" Margin="10,0,26,0" VerticalAlignment="Center" IsHitTestVisible="False"/>
+              <Popup Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                <Border Background="{DynamicResource FieldBg}" BorderBrush="{DynamicResource FieldBorder}" BorderThickness="1" CornerRadius="6" Margin="0,2,0,0"
+                        MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                  <ScrollViewer><StackPanel IsItemsHost="True" Margin="2"/></ScrollViewer>
+                </Border>
+              </Popup>
+            </Grid>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- ListView header + rows -->
+    <Style TargetType="GridViewColumnHeader">
+      <Setter Property="Background" Value="{DynamicResource HeaderBg}"/>
+      <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="GridViewColumnHeader">
+            <Border Background="{TemplateBinding Background}" BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="0,0,1,1" Padding="8,7">
+              <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style TargetType="ListViewItem">
+      <Setter Property="Foreground" Value="{DynamicResource TextMain}"/>
+      <Setter Property="Padding" Value="0,2"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="ListViewItem">
+            <Border x:Name="b" Background="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
+              <GridViewRowPresenter VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="b" Property="Background" Value="{DynamicResource HoverBg}"/></Trigger>
+              <Trigger Property="IsSelected" Value="True"><Setter TargetName="b" Property="Background" Value="{DynamicResource SelBg}"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- flat scrollbars -->
+    <Style x:Key="WtScrollThumb" TargetType="Thumb">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Thumb"><Border CornerRadius="4" Background="{DynamicResource ScrollThumb}" Margin="2"/></ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style TargetType="ScrollBar">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Width" Value="12"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="ScrollBar">
+            <Grid Background="{TemplateBinding Background}">
+              <Track x:Name="PART_Track">
+                <Track.Thumb><Thumb Style="{StaticResource WtScrollThumb}"/></Track.Thumb>
+                <Track.IncreaseRepeatButton><RepeatButton Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="False"/></Track.IncreaseRepeatButton>
+                <Track.DecreaseRepeatButton><RepeatButton Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="False"/></Track.DecreaseRepeatButton>
+              </Track>
+            </Grid>
+            <ControlTemplate.Triggers>
+              <Trigger Property="Orientation" Value="Vertical"><Setter TargetName="PART_Track" Property="IsDirectionReversed" Value="True"/></Trigger>
+              <Trigger Property="Orientation" Value="Horizontal"><Setter Property="Width" Value="Auto"/><Setter Property="Height" Value="12"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
   </Window.Resources>
   <Grid Margin="12">
     <Grid.RowDefinitions>
@@ -110,7 +254,9 @@ public class WinTuneRow : INotifyPropertyChanged {
 
     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,6">
       <TextBlock Text="Template:" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold"/>
-      <ComboBox x:Name="cmbTemplate" Width="280" Margin="0,0,8,0" DisplayMemberPath="Name"/>
+      <ComboBox x:Name="cmbTemplate" Width="280" Margin="0,0,8,0">
+        <ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Name}"/></DataTemplate></ComboBox.ItemTemplate>
+      </ComboBox>
       <Button x:Name="btnSaveTpl" Content="Save as template..."/>
       <Button x:Name="btnDelTpl" Content="Delete"/>
       <Button x:Name="btnExport" Content="Export for deployment..."/>
@@ -124,7 +270,7 @@ public class WinTuneRow : INotifyPropertyChanged {
       <CheckBox DockPanel.Dock="Right" x:Name="chkDark" Content="Dark mode" VerticalAlignment="Center" Margin="14,0,0,0"/>
       <CheckBox DockPanel.Dock="Right" x:Name="chkHideNA" Content="Hide N/A" VerticalAlignment="Center" Margin="10,0,0,0"/>
       <CheckBox DockPanel.Dock="Right" x:Name="chkRisk" Content="Low risk only" VerticalAlignment="Center" Margin="10,0,0,0"/>
-      <TextBox x:Name="txtSearch" Height="24" VerticalContentAlignment="Center"/>
+      <TextBox x:Name="txtSearch" Style="{StaticResource FieldBox}"/>
     </DockPanel>
 
     <ListView Grid.Row="3" x:Name="lv" Background="{DynamicResource FieldBg}" BorderBrush="{DynamicResource EdgeBrush}" Foreground="{DynamicResource TextMain}">
@@ -198,7 +344,7 @@ public class WinTuneRow : INotifyPropertyChanged {
             <TextBlock Text="Run common network-administration commands. Output appears in the log below. WinTune is already running as administrator." Foreground="{DynamicResource TextMuted}" TextWrapping="Wrap" Margin="0,0,0,12"/>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
               <TextBlock Text="Target host (ping / traceroute / nslookup / test):" VerticalAlignment="Center" Margin="0,0,8,0"/>
-              <TextBox x:Name="txtNetTarget" Text="8.8.8.8" Width="220" Height="26" VerticalContentAlignment="Center"/>
+              <TextBox x:Name="txtNetTarget" Style="{StaticResource FieldBox}" Text="8.8.8.8" Width="220"/>
             </StackPanel>
 
             <TextBlock Text="SHOW CONFIGURATION" Style="{StaticResource SectionHead}"/>
@@ -255,8 +401,10 @@ public class WinTuneRow : INotifyPropertyChanged {
       </TabItem>
     </TabControl>
 
-    <TextBox Grid.Row="1" x:Name="txtLog" IsReadOnly="True" FontFamily="Consolas" FontSize="12"
-             VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="#1E1E1E" Foreground="#DDD" Padding="6"/>
+    <Border Grid.Row="1" CornerRadius="6" Background="{DynamicResource LogBg}" BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1" Padding="2">
+      <TextBox x:Name="txtLog" IsReadOnly="True" FontFamily="Consolas" FontSize="12" BorderThickness="0" Padding="6"
+               VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="Transparent" Foreground="{DynamicResource LogFg}"/>
+    </Border>
   </Grid>
 </Window>
 '@
@@ -457,9 +605,13 @@ function Show-CustomTweakDialog {
 function Set-Theme {
     param([bool]$Dark)
     $pal = if ($Dark) {
-        @{ WinBg = '#1E1E1E'; FieldBg = '#252526'; TabHeaderBg = '#2D2D30'; TextMain = '#E8E8E8'; TextMuted = '#A8A8A8'; EdgeBrush = '#3F3F46'; ButtonBg = '#3A3A3D'; ButtonFg = '#E8E8E8' }
+        @{ WinBg = '#15171C'; FieldBg = '#1E2027'; HeaderBg = '#23262E'; TabHeaderBg = '#23262E'; TextMain = '#E6E8EC'; TextMuted = '#9AA1AD'
+           EdgeBrush = '#2E333D'; FieldBorder = '#3A414D'; HoverBg = '#262B35'; SelBg = '#2B3B54'; ScrollThumb = '#3A414D'
+           ButtonBg = '#2A2E37'; ButtonFg = '#E6E8EC'; AccentBrush = '#4C9DF0'; LogBg = '#121419'; LogFg = '#D4D6DC' }
     } else {
-        @{ WinBg = '#F3F3F3'; FieldBg = '#FFFFFF'; TabHeaderBg = '#E6E6E6'; TextMain = '#1F1F1F'; TextMuted = '#555555'; EdgeBrush = '#CFCFCF'; ButtonBg = '#FFFFFF'; ButtonFg = '#1F1F1F' }
+        @{ WinBg = '#F4F5F7'; FieldBg = '#FFFFFF'; HeaderBg = '#ECEEF2'; TabHeaderBg = '#E4E7EC'; TextMain = '#1E2125'; TextMuted = '#687082'
+           EdgeBrush = '#DADDE3'; FieldBorder = '#C4C8D0'; HoverBg = '#EDF3FE'; SelBg = '#DBE8FD'; ScrollThumb = '#C4C8D0'
+           ButtonBg = '#FFFFFF'; ButtonFg = '#1E2125'; AccentBrush = '#2F6FED'; LogBg = '#1B1D23'; LogFg = '#D6D8DE' }
     }
     $bc = New-Object System.Windows.Media.BrushConverter
     foreach ($k in $pal.Keys) {
